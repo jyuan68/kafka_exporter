@@ -447,7 +447,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 									lagSum += lag
 								}
 								ch <- prometheus.MustNewConstMetric(
-									consumergroupLag, prometheus.GaugeValue, float64(lag), group.GroupId, topic, strconv.FormatInt(int64(partition), 10),
+									consumergroupLag, prometheus.GaugeValue, group.Members[offsetFetchResponseBlock.Metadata].ClientId, float64(lag), group.GroupId, topic, strconv.FormatInt(int64(partition), 10),
 								)
 							} else {
 								plog.Errorf("No offset of topic %s partition %d, cannot get consumer group lag", topic, partition)
@@ -595,7 +595,7 @@ func main() {
 	consumergroupLag = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "consumergroup", "lag"),
 		"Current Approximate Lag of a ConsumerGroup at Topic/Partition",
-		[]string{"consumergroup", "topic", "partition"}, labels,
+		[]string{"consumergroup", "topic", "clientid", "partition"}, labels,
 	)
 
 	consumergroupLagZookeeper = prometheus.NewDesc(
